@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Development server configuration for http://bubblecoup.com
+# Development server configuration for bubblecoup
 # Copyright (C) 2016 by Ivan Keberlein <ivan@keberlein.org>
 #___________________________________________________________
 
