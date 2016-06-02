@@ -7,6 +7,7 @@ All references to files and directories, if otherwise is not mentioned, are rela
 4. run 'vagrant up'
 
 Resources accesible at virtual server:
+
 	* site URL http://localhost:8080
 	  - admin user name: admin
 	  - admin password: test
