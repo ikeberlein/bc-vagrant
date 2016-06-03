@@ -1,4 +1,4 @@
-[submodule "bocoup"]
-	path = public_html
-	url = git@github.com:/jashand/bcoup.git
+#[submodule "bocoup"]
+#	path = public_html
+#	url = git@github.com:/jashand/bcoup.git
 
