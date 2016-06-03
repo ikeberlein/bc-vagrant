@@ -58,18 +58,22 @@ fi
 # Init site's database
 #___________________________________________________________
 
+sql_exec() {
+	echo "$1" | mysql -u root "$2"
+}
+
 edit_database() {
 	# set admin user login to 'admin' and password to 'test'
-	echo "update wp_users set user_login='admin', user_nicename='admin', display_name='Admin Workerson', user_pass='\$P\$B55D6LjfHDkINU5wF.v2BuuzO0/XPk/' where id=1;" | mysql -u root $DBNAME
-	echo "update wp_options set option_value='http://localhost:8080' where option_name='siteurl';" | mysql -u root $DBNAME
-	echo "update wp_options set option_value='http://localhost:8080' where option_name='home';" | mysql -u root $DBNAME
-	echo "update wp_options set option_value='0' where option_name='hide_my_site_enabled';" | mysql -u root $DBNAME
+	sql_exec "update wp_users set user_login='admin', user_nicename='admin', display_name='Admin Workerson', user_pass='\$P\$B55D6LjfHDkINU5wF.v2BuuzO0/XPk/' where id=1;" $DBNAME
+	sql_exec "update wp_options set option_value='http://localhost:8080' where option_name='siteurl';" $DBNAME
+	sql_exec "update wp_options set option_value='http://localhost:8080' where option_name='home';" $DBNAME
+	sql_exec "update wp_options set option_value='0' where option_name='hide_my_site_enabled';" $DBNAME
 }
 
 create_database() {
-	echo "create database $DBNAME default character set 'utf8';" | mysql -u root
-	echo "grant all privileges on $DBNAME.* to $DBUSER@'%' identified by '$DBPASS';" | mysql -u root
-	echo "flush privileges;" | mysql -u root
+	sql_exec "create database $DBNAME default character set 'utf8';"
+	sql_exec "grant all privileges on $DBNAME.* to $DBUSER@'%' identified by '$DBPASS';"
+	sql_exec "flush privileges;"
 }
 
 update_database() {
@@ -85,13 +89,13 @@ DBPASS=bubblecouppass
 DBDUMP=/vagrant/bubble.sql.bz2
 DBUPD=/vagrant/$DBNAME.sql
 
-echo "show databases" | mysql -u root | grep -q $DBNAME
+sql_exec "show databases" | grep -q $DBNAME
 if [ "x$?" == "x1" ]; then
 	echo "*** Setting up database"
 	
 	# Create DBA account
-	echo "grant all privileges on *.* to dba@'%' identified by 'dbapass' with grant option;" | mysql -u root
-	echo "flush privileges;" | mysql -u root
+	sql_exec "grant all privileges on *.* to dba@'%' identified by 'dbapass' with grant option;"
+	sql_exec "flush privileges;"
 
 	if [ -r $DBUPD ]; then
 		update_database
@@ -102,14 +106,14 @@ if [ "x$?" == "x1" ]; then
 			bzcat $DBDUMP | mysql -u root $DBNAME
 			edit_database
 		else
-			echo "drop database $DBNAME;" | mysql -u root
+			sql_exec "drop database $DBNAME;"
 			echo "[WARNING] no database dump found at $DBDUMP"
 		fi
 	fi
 	echo "*** Database setup done"
 else
 	if [ -r $DBUPD ]; then
-		echo "drop database $DBNAME;" | mysql -u root
+		sql_exec "drop database $DBNAME;"
 		update_database
 	fi
 fi
