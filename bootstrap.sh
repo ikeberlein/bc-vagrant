@@ -62,18 +62,26 @@ sql_exec() {
 	echo "$1" | mysql -u root "$2"
 }
 
+sql_execi() {
+	mysql -u root "$1"
+}
+
 edit_database() {
 	# set admin user login to 'admin' and password to 'test'
-	sql_exec "update wp_users set user_login='admin', user_nicename='admin', display_name='Admin Workerson', user_pass='\$P\$B55D6LjfHDkINU5wF.v2BuuzO0/XPk/' where id=1;" $DBNAME
-	sql_exec "update wp_options set option_value='http://localhost:8080' where option_name='siteurl';" $DBNAME
-	sql_exec "update wp_options set option_value='http://localhost:8080' where option_name='home';" $DBNAME
-	sql_exec "update wp_options set option_value='0' where option_name='hide_my_site_enabled';" $DBNAME
+	sql_execi $DBNAME <<SQL
+update wp_users set user_login='admin', user_nicename='admin', display_name='Admin Workerson', user_pass='\$P\$B55D6LjfHDkINU5wF.v2BuuzO0/XPk/' where id=1;
+update wp_options set option_value='http://localhost:8080' where option_name='siteurl';
+update wp_options set option_value='http://localhost:8080' where option_name='home';
+update wp_options set option_value='0' where option_name='hide_my_site_enabled';
+SQL
 }
 
 create_database() {
-	sql_exec "create database $DBNAME default character set 'utf8';"
-	sql_exec "grant all privileges on $DBNAME.* to $DBUSER@'%' identified by '$DBPASS';"
-	sql_exec "flush privileges;"
+	sql_execi <<SQL
+create database $DBNAME default character set 'utf8';
+grant all privileges on $DBNAME.* to $DBUSER@'%' identified by '$DBPASS';
+flush privileges;
+SQL
 }
 
 update_database() {
@@ -83,14 +91,17 @@ update_database() {
 	edit_database
 }
 
+drop_database() {
+	sql_exec "drop database $DBNAME;"
+}
+
 DBNAME=bubbleco_wpdb
 DBUSER=bubblecoup
 DBPASS=bubblecouppass
 DBDUMP=/vagrant/bubble.sql.bz2
 DBUPD=/vagrant/$DBNAME.sql
 
-sql_exec "show databases" | grep -q $DBNAME
-if [ "x$?" == "x1" ]; then
+if [ ! `sql_exec "show databases" | grep -q $DBNAME` ]; then
 	echo "*** Setting up database"
 	
 	# Create DBA account
@@ -106,14 +117,14 @@ if [ "x$?" == "x1" ]; then
 			bzcat $DBDUMP | mysql -u root $DBNAME
 			edit_database
 		else
-			sql_exec "drop database $DBNAME;"
+			drop_database
 			echo "[WARNING] no database dump found at $DBDUMP"
 		fi
 	fi
 	echo "*** Database setup done"
 else
 	if [ -r $DBUPD ]; then
-		sql_exec "drop database $DBNAME;"
+		drop_database
 		update_database
 	fi
 fi
@@ -149,3 +160,4 @@ if [ -r /vagrant/public_html/index.php -a ! -d /vagrant/public_html/wp-content/u
 	cp wp-config.php public_html
 	popd
 fi
+
