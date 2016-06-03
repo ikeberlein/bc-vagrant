@@ -1,5 +1,6 @@
 *.bz*
 log/*
+public_html
 public_html/*
 .*
 !.gitignore
