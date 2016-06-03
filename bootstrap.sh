@@ -101,6 +101,7 @@ DBPASS=bubblecouppass
 DBDUMP=/vagrant/bubble.sql.bz2
 DBUPD=/vagrant/$DBNAME.sql
 
+# if database doesn't exist
 if [ ! `sql_exec "show databases" | grep -q $DBNAME` ]; then
 	echo "*** Setting up database"
 	
