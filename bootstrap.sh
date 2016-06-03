@@ -102,6 +102,7 @@ if [ "x$?" == "x1" ]; then
 			bzcat $DBDUMP | mysql -u root $DBNAME
 			edit_database
 		else
+			echo "drop database $DBNAME;" | mysql -u root
 			echo "[WARNING] no database dump found at $DBDUMP"
 		fi
 	fi
