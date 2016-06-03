@@ -95,6 +95,7 @@ drop_database() {
 	sql_exec "drop database $DBNAME;"
 }
 
+DBAPAS=dbapass
 DBNAME=bubbleco_wpdb
 DBUSER=bubblecoup
 DBPASS=bubblecouppass
@@ -106,7 +107,7 @@ if [ ! `sql_exec "show databases" | grep -q $DBNAME` ]; then
 	echo "*** Setting up database"
 	
 	# Create DBA account
-	sql_exec "grant all privileges on *.* to dba@'%' identified by 'dbapass' with grant option;"
+	sql_exec "grant all privileges on *.* to dba@'%' identified by '$DBAPAS' with grant option;"
 	sql_exec "flush privileges;"
 
 	if [ -r $DBUPD ]; then
