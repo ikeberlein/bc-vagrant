@@ -111,6 +111,7 @@ if [ ! `sql_exec "show databases" | grep -q $DBNAME` ]; then
 	sql_exec "flush privileges;"
 
 	if [ -r $DBUPD ]; then
+		drop_database
 		update_database
 	else
 		create_database
