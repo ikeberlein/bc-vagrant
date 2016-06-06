@@ -1,4 +1,5 @@
 *.bz*
+*.sql
 log/*
 public_html
 public_html/*
