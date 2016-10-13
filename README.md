@@ -18,3 +18,10 @@ Resources accesible at virtual server:
 
 Web server log files are located under log directory.
 
+Site update procedure
+
+1. Extract new version of uploads.tar.bz2 in place of public_html/wp-content/uploads
+2. Place new version of bubbleco_wpdb.sql into vagrant root
+3. run 'vagrant up'
+4. run 'vagrant provision'
+
